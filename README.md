@@ -1,4 +1,4 @@
-# Đề tài 2: Phân Đoạn Ảnh Y Tế (Kvasir-SEG) — So Sánh U-Net và SegFormer
+# Đề tài 2: Phân Đoạn Ảnh Y Tế 
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-ee4c2c.svg)](https://pytorch.org/)
@@ -66,8 +66,6 @@ pip install -r requirements.txt
 
 ## 3. Hướng Dẫn Tải Dữ Liệu (External Dataset)
 
-> **Lưu ý quan trọng**: Theo quy định, repository **không lưu trữ dữ liệu ảnh và mask** để đảm bảo dung lượng kho chứa gọn nhẹ. Dữ liệu được tải trực tiếp từ nguồn ngoài chính thức.
-
 - **Nguồn dữ liệu**: Bộ dữ liệu [Kvasir-SEG](https://datasets.simula.no/kvasir-seg/) do *Simula Research Laboratory* công bố.
 - **Tải tự động bằng script**:
   ```bash
@@ -130,8 +128,7 @@ Kết quả sẽ được tự động lưu vào file `outputs/results_summary.c
 ---
 
 ## 6. Trọng Số Mô Hình (Pretrained Checkpoints)
-
-> **Quy chuẩn lưu trữ trọng số**: Theo quy định, **không tải các file trọng số lớn (`*.pth`, `*.pt`, `*.bin`) lên Git**. 
+ 
 > Checkpoints đã huấn luyện của nhóm được lưu trữ tại link bên ngoài (Google Drive / Hugging Face Model Hub):
 > - [Liên kết tải trọng số mô hình dự án (Google Drive)](https://drive.google.com/) *(được cập nhật sau khi hoàn thành huấn luyện)*.
 
