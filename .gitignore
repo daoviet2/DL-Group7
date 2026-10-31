@@ -1,0 +1,48 @@
+# Byte-compiled / optimized / URL-encoded files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C/C++ build artifacts & shared libraries
+*.so
+*.dylib
+*.dll
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# PyTorch checkpoints and model weights
+*.pt
+*.pth
+*.bin
+*.onnx
+
+# Data directory (Kvasir-SEG & raw medical datasets)
+Kvasir-SEG/
+data/
+ISIC/
+
+# Outputs, logs & caches
+outputs/
+logs/
+wandb/
+.cache/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+

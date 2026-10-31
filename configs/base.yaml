@@ -1,0 +1,48 @@
+# Configuration cho Dự án Phân đoạn ảnh y tế Kvasir-SEG
+
+project_name: "phan_doan_anh_y_te"
+seed: 42
+
+# Dữ liệu & Tiền xử lý
+data:
+  data_root: "./Kvasir-SEG"
+  images_dir: "./Kvasir-SEG/images"
+  masks_dir: "./Kvasir-SEG/masks"
+  bboxes_path: "./Kvasir-SEG/kavsir_bboxes.json"
+  split_dir: "./splits"
+  image_size: 256                # Kích thước ảnh chuẩn (chia hết cho 32; có thể cấu hình 352 cho ablation)
+  use_augmentation: true         # Bật/tắt Data Augmentation (phục vụ Ablation Study Tuần 4)
+  batch_size: 8                  # Tối ưu cho Colab/Kaggle T4 GPU
+  num_workers: 2
+  pin_memory: true
+  # Chuẩn hóa ImageNet
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+# Mô hình & Kiến trúc
+model:
+  name: "unet_scratch"           # Các tùy chọn: "unet_scratch", "unet_resnet34", "segformer_b0", "segformer_b2"
+  in_channels: 3
+  num_classes: 1                 # Phân đoạn nhị phân (Polyp vs Background)
+  encoder_pretrained: false
+
+# Huấn luyện
+train:
+  epochs: 50
+  lr: 0.001                      # Learning rate cơ sở
+  weight_decay: 0.0001
+  scheduler: "cosine"            # "cosine", "plateau", "none"
+  warmup_epochs: 3
+  min_lr: 0.00001
+  early_stopping_patience: 10
+  amp: true                      # Mixed precision fp16 để tiết kiệm VRAM và tăng tốc
+  loss: "bce_dice"               # "bce_dice", "dice", "focal", "tversky"
+
+# Đánh giá & Lưu trữ
+eval:
+  metrics: ["dice", "iou"]
+  threshold: 0.5
+  output_dir: "./outputs"
+  checkpoint_dir: "./outputs/checkpoints"
+  log_dir: "./outputs/logs"
+
