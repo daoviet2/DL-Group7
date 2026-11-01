@@ -123,7 +123,7 @@ python scripts/evaluate.py --checkpoint outputs/checkpoints/best_unet_scratch_se
 python scripts/reproduce_results.py
 ```
 
-Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, bạn có thể mở notebook [`notebooks/colab_kaggle_setup.ipynb`](notebooks/colab_kaggle_setup.ipynb) trên Google Colab / Kaggle (GPU T4/P100) để tái tạo toàn bộ bảng kết quả bằng 1 cú click.
+Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, có thể mở notebook [`notebooks/colab_kaggle_setup.ipynb`](notebooks/colab_kaggle_setup.ipynb) trên Google Colab / Kaggle (GPU T4/P100) để tái tạo toàn bộ bảng kết quả.
 
 ---
 

@@ -21,7 +21,7 @@ tqdm>=4.65.0
 # Configuration & Utilities
 PyYAML>=6.0
 
-# Models & Ecosystem (TV1, TV2, TV3)
+# Models & Ecosystem
 segmentation-models-pytorch>=0.3.3
 transformers>=4.35.0
 timm>=0.9.8
