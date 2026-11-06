@@ -51,6 +51,14 @@ class KvasirSegDataset(Dataset):
         super().__init__()
         assert split in ("train", "val", "test"), f"Split '{split}' không hợp lệ (phải là 'train', 'val' hoặc 'test')."
         self.split = split
+
+        # Tự động đối chiếu các vị trí thư mục dữ liệu phổ biến nếu đường dẫn mặc định chưa tồn tại
+        if not os.path.isdir(os.path.join(data_root, "images")):
+            for cand in ("./Kvasir-SEG", "./datasets/Kvasir-SEG", "./src/datasets/Kvasir-SEG", "../Kvasir-SEG"):
+                if os.path.isdir(os.path.join(cand, "images")):
+                    data_root = cand
+                    break
+
         self.data_root = data_root
         self.split_dir = split_dir
         self.return_bbox = return_bbox
