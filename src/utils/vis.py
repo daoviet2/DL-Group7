@@ -16,8 +16,9 @@ if "MPLCONFIGDIR" not in os.environ:
 
 import cv2
 import matplotlib
-# Sử dụng backend Agg để không yêu cầu giao diện đồ họa (GUI)
-matplotlib.use("Agg")
+# Chỉ dùng backend Agg khi chạy CLI script, giữ nguyên inline backend trên Jupyter/Colab
+if "ipykernel" not in sys.modules and "google.colab" not in sys.modules:
+    matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
