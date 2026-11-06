@@ -38,7 +38,7 @@ Dự án nghiên cứu và đánh giá thực nghiệm bài toán phân đoạn 
 │   ├── evaluate.py               # Script đánh giá mô hình trên tập Test
 │   └── sanity_check_data.py      # Kiểm tra toàn vẹn dữ liệu & trực quan hóa batch mẫu
 ├── notebooks/
-│   └── colab_kaggle_setup.ipynb  # Notebook tái tạo kết quả trên GPU Google Colab / Kaggle
+│   └── colab_setup.ipynb         # Notebook chạy thử và tái tạo kết quả trên GPU Google Colab
 ├── requirements.txt              # Danh sách thư viện Python phụ thuộc
 └── README.md
 ```
@@ -123,7 +123,7 @@ python scripts/evaluate.py --checkpoint outputs/checkpoints/best_unet_scratch_se
 python scripts/reproduce_results.py
 ```
 
-Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, có thể mở notebook [`notebooks/colab_kaggle_setup.ipynb`](notebooks/colab_kaggle_setup.ipynb) trên Google Colab / Kaggle (GPU T4/P100) để tái tạo toàn bộ bảng kết quả.
+Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, có thể mở notebook [`notebooks/colab_setup.ipynb`](notebooks/colab_setup.ipynb) trên Google Colab (GPU T4/P100) để tái tạo toàn bộ bảng kết quả.
 
 ---
 
