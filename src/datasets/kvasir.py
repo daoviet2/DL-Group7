@@ -25,6 +25,45 @@ from src.datasets.transforms import (
 )
 
 
+def resolve_kvasir_root(data_root: str = "./Kvasir-SEG") -> str:
+    """Tự động dò tìm thư mục gốc Kvasir-SEG trên Kaggle (/kaggle/input), máy cục bộ hoặc thư mục làm việc."""
+    def _is_valid_kvasir_dir(path: str) -> bool:
+        img_dir = os.path.join(path, "images")
+        msk_dir = os.path.join(path, "masks")
+        if not (os.path.isdir(img_dir) and os.path.isdir(msk_dir)):
+            return False
+        return len([f for f in os.listdir(img_dir) if f.lower().endswith((".jpg", ".png"))]) >= 1000
+
+    if _is_valid_kvasir_dir(data_root):
+        return data_root
+
+    # 1. Ưu tiên quét thư mục read-only /kaggle/input trên môi trường Kaggle Notebook
+    kaggle_input = "/kaggle/input"
+    if os.path.isdir(kaggle_input):
+        base_depth = kaggle_input.rstrip(os.sep).count(os.sep)
+        for root, dirs, _ in os.walk(kaggle_input):
+            if root.count(os.sep) - base_depth > 4:
+                dirs[:] = []
+                continue
+            if "images" in dirs and "masks" in dirs and _is_valid_kvasir_dir(root):
+                return root
+
+    # 2. Kiểm tra các đường dẫn thư mục làm việc phổ biến
+    candidates = (
+        "./Kvasir-SEG",
+        "/kaggle/working/Kvasir-SEG",
+        "/kaggle/working/DL-Group7/Kvasir-SEG",
+        "./datasets/Kvasir-SEG",
+        "./src/datasets/Kvasir-SEG",
+        "../Kvasir-SEG",
+    )
+    for cand in candidates:
+        if _is_valid_kvasir_dir(cand):
+            return cand
+
+    return data_root
+
+
 class KvasirSegDataset(Dataset):
     """PyTorch Dataset cho tập dữ liệu phân đoạn Kvasir-SEG.
 
@@ -52,12 +91,8 @@ class KvasirSegDataset(Dataset):
         assert split in ("train", "val", "test"), f"Split '{split}' không hợp lệ (phải là 'train', 'val' hoặc 'test')."
         self.split = split
 
-        # Tự động đối chiếu các vị trí thư mục dữ liệu phổ biến nếu đường dẫn mặc định chưa tồn tại
-        if not os.path.isdir(os.path.join(data_root, "images")):
-            for cand in ("./Kvasir-SEG", "./datasets/Kvasir-SEG", "./src/datasets/Kvasir-SEG", "../Kvasir-SEG"):
-                if os.path.isdir(os.path.join(cand, "images")):
-                    data_root = cand
-                    break
+        # Tự động dò tìm thư mục dữ liệu trên Kaggle (/kaggle/input) hoặc cục bộ
+        data_root = resolve_kvasir_root(data_root)
 
         self.data_root = data_root
         self.split_dir = split_dir

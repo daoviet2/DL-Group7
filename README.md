@@ -38,7 +38,7 @@ Dự án nghiên cứu và đánh giá thực nghiệm bài toán phân đoạn 
 │   ├── evaluate.py               # Script đánh giá mô hình trên tập Test
 │   └── sanity_check_data.py      # Kiểm tra toàn vẹn dữ liệu & trực quan hóa batch mẫu
 ├── notebooks/
-│   └── colab_setup.ipynb         # Notebook chạy thử và tái tạo kết quả trên GPU Google Colab
+│   └── kaggle_setup.ipynb        # Notebook thiết lập chuẩn và chạy thử trên GPU Kaggle cho cả nhóm
 ├── requirements.txt              # Danh sách thư viện Python phụ thuộc
 └── README.md
 ```
@@ -123,7 +123,7 @@ python scripts/evaluate.py --checkpoint outputs/checkpoints/best_unet_scratch_se
 python scripts/reproduce_results.py
 ```
 
-Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, có thể mở notebook [`notebooks/colab_setup.ipynb`](notebooks/colab_setup.ipynb) trên Google Colab (GPU T4/P100) để tái tạo toàn bộ bảng kết quả.
+Kết quả sẽ được tự động lưu vào file `outputs/results_summary.csv`. Ngoài ra, các thành viên có thể import trực tiếp notebook [`notebooks/kaggle_setup.ipynb`](notebooks/kaggle_setup.ipynb) lên **Kaggle Notebooks** (GPU T4 x2 / P100, bật Internet) để thiết lập môi trường và tái tạo toàn bộ bảng kết quả.
 
 ---
 
@@ -134,8 +134,8 @@ Kết quả sẽ được tự động lưu vào file `outputs/results_summary.c
 
 ---
 
-## 7. Đóng Góp Thành Viên
+## 7. Đóng Góp 
 
-- **TV1 (Thành viên 1)**: Xây dựng pipeline dữ liệu/DataLoader, phân tầng kích thước polyp, U-Net từ đầu, U-Net ResNet34, quản lý hệ thống config & seed.
-- **TV2 (Thành viên 2)**: Fine-tune mô hình Transformer SegFormer (MiT-B0, MiT-B2), đo tốc độ suy luận (FPS) và số lượng tham số.
-- **TV3 (Thành viên 3)**: Khảo sát hàm mất mát (BCE+Dice, Focal, Tversky), đánh giá SAM zero-shot và phân tích lỗi.
+- **Đào Văn Việt**: Xây dựng pipeline dữ liệu/DataLoader, phân tầng kích thước polyp, U-Net từ đầu, U-Net ResNet34, quản lý hệ thống config & seed.
+- **Trịnh Minh Đức**: Fine-tune mô hình Transformer SegFormer (MiT-B0, MiT-B2), đo tốc độ suy luận (FPS) và số lượng tham số.
+- **Nguyễn Tiến Hưởng**: Khảo sát hàm mất mát (BCE+Dice, Focal, Tversky), đánh giá SAM zero-shot và phân tích lỗi.

@@ -16,8 +16,12 @@ if "MPLCONFIGDIR" not in os.environ:
 
 import cv2
 import matplotlib
-# Chỉ dùng backend Agg khi chạy CLI script, giữ nguyên inline backend trên Jupyter/Colab
-if "ipykernel" not in sys.modules and "google.colab" not in sys.modules:
+# Chỉ dùng backend Agg khi chạy CLI script độc lập, giữ nguyên inline backend trên Jupyter/Kaggle/Colab
+if (
+    "ipykernel" not in sys.modules
+    and "google.colab" not in sys.modules
+    and "KAGGLE_KERNEL_RUN_TYPE" not in os.environ
+):
     matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np

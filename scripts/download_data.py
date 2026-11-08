@@ -69,11 +69,37 @@ def _find_extracted_root(search_dir: str) -> str:
     raise RuntimeError(f"Không tìm thấy thư mục 'images' và 'masks' sau khi giải nén tại '{search_dir}'.")
 
 
+def _find_kaggle_input_dataset() -> str:
+    """Tự động quét /kaggle/input nếu thành viên đã gắn sẵn Kvasir-SEG qua nút Add Input trên Kaggle."""
+    kaggle_input = "/kaggle/input"
+    if not os.path.isdir(kaggle_input):
+        return ""
+    base_depth = kaggle_input.rstrip(os.sep).count(os.sep)
+    for root, dirs, _ in os.walk(kaggle_input):
+        if root.count(os.sep) - base_depth > 4:
+            dirs[:] = []
+            continue
+        if "images" in dirs and "masks" in dirs and _has_valid_dataset(root):
+            return root
+    return ""
+
+
 def download_and_extract(target_dir: str = TARGET_DIR) -> str:
-    # Kiểm tra target_dir và các đường dẫn phổ biến nếu dùng mặc định
+    # 1. Ưu tiên kiểm tra /kaggle/input trên môi trường Kaggle để tiết kiệm 20GB /kaggle/working
+    kaggle_dir = _find_kaggle_input_dataset()
+    if kaggle_dir:
+        print(f"[Info] Phát hiện Kvasir-SEG đã gắn sẵn trên Kaggle Input tại '{kaggle_dir}'. Không cần tải lại.")
+        return kaggle_dir
+
+    # 2. Kiểm tra target_dir và các đường dẫn phổ biến nếu dùng mặc định
     candidates = [target_dir]
     if os.path.normpath(target_dir) == os.path.normpath(TARGET_DIR):
-        candidates.extend(["./datasets/Kvasir-SEG", "./src/datasets/Kvasir-SEG", "../Kvasir-SEG"])
+        candidates.extend([
+            "/kaggle/working/Kvasir-SEG",
+            "./datasets/Kvasir-SEG",
+            "./src/datasets/Kvasir-SEG",
+            "../Kvasir-SEG",
+        ])
 
     for cand in candidates:
         if _has_valid_dataset(cand):

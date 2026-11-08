@@ -30,19 +30,29 @@ from PIL import Image
 from sklearn.model_selection import StratifiedShuffleSplit
 
 
-def check_and_download_data(data_root: str) -> None:
-    """Kiểm tra thư mục dữ liệu, nếu chưa có thì kích hoạt tải tự động."""
-    img_dir = os.path.join(data_root, "images")
-    mask_dir = os.path.join(data_root, "masks")
-    bbox_path = os.path.join(data_root, "kavsir_bboxes.json")
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
-    if not (os.path.exists(img_dir) and os.path.exists(mask_dir) and os.path.exists(bbox_path)):
-        print(f"[Warning] Thư mục dữ liệu '{data_root}' không đầy đủ. Kích hoạt tự động tải...")
+
+def check_and_download_data(data_root: str) -> str:
+    """Kiểm tra thư mục dữ liệu (bao gồm /kaggle/input), nếu chưa có thì kích hoạt tải tự động."""
+    from src.datasets.kvasir import resolve_kvasir_root
+
+    resolved = resolve_kvasir_root(data_root)
+    img_dir = os.path.join(resolved, "images")
+    mask_dir = os.path.join(resolved, "masks")
+
+    if not (os.path.isdir(img_dir) and os.path.isdir(mask_dir)):
+        print(f"[Warning] Thư mục dữ liệu '{data_root}' chưa có sẵn. Kích hoạt dò tìm / tải tự động...")
         try:
             from scripts.download_data import download_and_extract
-            download_and_extract()
+            resolved = download_and_extract(data_root)
         except Exception as e:
-            raise RuntimeError(f"Không thể tự động tải dữ liệu: {e}. Vui lòng kiểm tra kết nối mạng hoặc giải nén Kvasir-SEG vào '{data_root}'.")
+            raise RuntimeError(
+                f"Không thể tự động tải dữ liệu: {e}. Vui lòng gắn Kvasir-SEG vào Kaggle Input hoặc giải nén vào '{data_root}'."
+            )
+    return resolved
 
 
 def verify_dataset_integrity(img_dir: str, mask_dir: str, bbox_path: str) -> Tuple[List[str], Dict]:
@@ -229,10 +239,10 @@ def main():
     args = parser.parse_args()
 
     # 1. Kiểm tra dữ liệu
-    check_and_download_data(args.data_root)
-    img_dir = os.path.join(args.data_root, "images")
-    mask_dir = os.path.join(args.data_root, "masks")
-    bbox_path = os.path.join(args.data_root, "kavsir_bboxes.json")
+    data_root = check_and_download_data(args.data_root)
+    img_dir = os.path.join(data_root, "images")
+    mask_dir = os.path.join(data_root, "masks")
+    bbox_path = os.path.join(data_root, "kavsir_bboxes.json")
 
     # 2. Kiểm tra tính toàn vẹn
     stems, bboxes = verify_dataset_integrity(img_dir, mask_dir, bbox_path)
