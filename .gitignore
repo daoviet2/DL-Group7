@@ -39,6 +39,7 @@ outputs/
 logs/
 wandb/
 .cache/
+notebooks/DL-Group7/
 
 # IDE & OS files
 .vscode/
