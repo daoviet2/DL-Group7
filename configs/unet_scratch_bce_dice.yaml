@@ -1,0 +1,22 @@
+# Thí nghiệm Baseline: U-Net cài đặt từ đầu với hàm mất mát BCE + SoftDice
+# Kế thừa toàn bộ cấu hình chuẩn từ configs/base.yaml
+_base_: base.yaml
+
+model:
+  name: "unet_scratch"
+  encoder_pretrained: false
+
+train:
+  loss: "bce_dice"
+  loss_params:
+    bce_weight: 1.0
+    dice_weight: 1.0
+    smooth: 1.0
+  lr: 0.001
+  weight_decay: 0.0001
+  epochs: 50
+  scheduler: "cosine"
+  warmup_epochs: 3
+  early_stopping_patience: 10
+  amp: true
+

@@ -102,3 +102,4 @@ class BCEDiceLoss(nn.Module):
         dice = self.dice_loss(logits_f32, targets_f32)
 
         return self.bce_weight * bce + self.dice_weight * dice
+

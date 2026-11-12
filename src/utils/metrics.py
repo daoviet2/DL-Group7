@@ -170,3 +170,4 @@ class MetricTracker:
     def get_records(self) -> List[Dict[str, Union[str, float]]]:
         """Trả về toàn bộ danh sách kết quả chi tiết từng ảnh."""
         return list(self.records)
+
