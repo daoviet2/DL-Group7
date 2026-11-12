@@ -52,11 +52,10 @@ eval:
   results_csv: "./outputs/results.csv"
   pred_dir: "./outputs/predictions"
 
-# Nhật ký & Giám sát huấn luyện (Logging đa kênh)
+# Nhật ký & Giám sát huấn luyện (Logging)
 logging:
   use_csv: true
-  use_tensorboard: true
-  use_wandb: false
+  use_wandb: true
   wandb_project: "kvasir-seg-polyp"
   wandb_entity: null
   wandb_mode: "offline"          # "online", "offline", "disabled"

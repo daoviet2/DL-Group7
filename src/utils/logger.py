@@ -1,9 +1,9 @@
-"""Nhật ký huấn luyện đa kênh: CSV cục bộ, TensorBoard và Weights & Biases (WandB).
+"""Nhật ký huấn luyện: CSV cục bộ và Weights & Biases (WandB).
 
 Cung cấp:
 - CSVLogger: Ghi log chi tiết theo từng epoch ra file CSV cục bộ bằng thư viện chuẩn `csv`.
-- ExperimentLogger: Điều phối đồng thời CSV, TensorBoard và Weights & Biases; an toàn tuyệt đối
-  khi không có mạng hoặc chưa cài đặt thư viện ngoài (tự động chuyển sang fallback).
+- ExperimentLogger: Điều phối đồng thời CSV cục bộ và Weights & Biases; an toàn tuyệt đối
+  khi chạy offline hoặc chưa có API key.
 - append_result: Ghi một dòng kết quả tóm tắt vào outputs/results.csv theo đúng định dạng nhóm.
 """
 
@@ -88,31 +88,27 @@ class CSVLogger:
 
 
 class ExperimentLogger:
-    """Bộ ghi nhật ký đa kênh kết hợp CSV cục bộ, TensorBoard và Weights & Biases."""
+    """Bộ ghi nhật ký kết hợp CSV cục bộ và Weights & Biases (WandB)."""
 
     def __init__(
         self,
         run_name: str,
         config: Dict[str, Any],
         log_dir: str = "./outputs/logs",
-        tb_dir: str = "./outputs/tb",
     ):
         self.run_name = run_name
         self.config = config
         self.log_dir = log_dir
-        self.tb_dir = tb_dir
 
         logging_cfg = config.get("logging", {})
         self.use_csv = bool(logging_cfg.get("use_csv", True))
-        self.use_tb = bool(logging_cfg.get("use_tensorboard", True))
-        self.use_wandb = bool(logging_cfg.get("use_wandb", False))
+        self.use_wandb = bool(logging_cfg.get("use_wandb", True))
         self.wandb_mode = str(logging_cfg.get("wandb_mode", "offline")).lower()
         self.wandb_project = str(logging_cfg.get("wandb_project", "kvasir-seg-polyp"))
         self.wandb_entity = logging_cfg.get("wandb_entity", None)
 
         self.wandb_url: Optional[str] = None
         self.csv_logger: Optional[CSVLogger] = None
-        self.tb_writer = None
         self.wandb_run = None
 
         # 1. Khởi tạo CSV Logger
@@ -120,23 +116,10 @@ class ExperimentLogger:
             csv_path = os.path.join(self.log_dir, f"{run_name}.csv")
             self.csv_logger = CSVLogger(csv_path)
 
-        # 2. Khởi tạo TensorBoard SummaryWriter
-        if self.use_tb:
-            try:
-                from torch.utils.tensorboard import SummaryWriter
-                run_tb_dir = os.path.join(self.tb_dir, run_name)
-                os.makedirs(run_tb_dir, exist_ok=True)
-                self.tb_writer = SummaryWriter(log_dir=run_tb_dir)
-            except Exception as e:
-                # Không làm gián đoạn chương trình nếu thiếu thư viện tensorboard
-                print(f"[Cảnh báo Logger] Không thể khởi tạo TensorBoard ({e}). Tự động bỏ qua.")
-                self.tb_writer = None
-
-        # 3. Khởi tạo Weights & Biases
+        # 2. Khởi tạo Weights & Biases
         if self.use_wandb and self.wandb_mode != "disabled":
             try:
                 import wandb
-                # Thiết lập wandb
                 self.wandb_run = wandb.init(
                     project=self.wandb_project,
                     entity=self.wandb_entity,
@@ -155,20 +138,14 @@ class ExperimentLogger:
                 self.wandb_run = None
 
     def log_epoch(self, metrics: Dict[str, Any]) -> None:
-        """Ghi nhận chỉ số của một epoch vào toàn bộ các kênh đang kích hoạt."""
+        """Ghi nhận chỉ số của một epoch vào CSV và WandB."""
         # 1. Ghi CSV
         if self.csv_logger is not None:
             self.csv_logger.log(metrics)
 
         epoch = metrics.get("epoch", 1)
 
-        # 2. Ghi TensorBoard
-        if self.tb_writer is not None:
-            for k, v in metrics.items():
-                if isinstance(v, (int, float)) and k != "epoch":
-                    self.tb_writer.add_scalar(k, v, epoch)
-
-        # 3. Ghi WandB
+        # 2. Ghi WandB
         if self.wandb_run is not None:
             try:
                 import wandb
@@ -179,15 +156,7 @@ class ExperimentLogger:
                 pass
 
     def close(self) -> None:
-        """Đóng an toàn các luồng ghi nhật ký."""
-        if self.tb_writer is not None:
-            try:
-                self.tb_writer.flush()
-                self.tb_writer.close()
-            except Exception:
-                pass
-            self.tb_writer = None
-
+        """Đóng an toàn luồng ghi nhật ký WandB."""
         if self.wandb_run is not None:
             try:
                 import wandb
@@ -219,4 +188,3 @@ def append_result(filepath: str, result_dict: Dict[str, Any]) -> None:
             writer.writerow(RESULT_COLUMNS)
         row = [result_dict.get(col, "") for col in RESULT_COLUMNS]
         writer.writerow(row)
-
