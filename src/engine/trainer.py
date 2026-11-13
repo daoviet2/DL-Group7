@@ -302,6 +302,11 @@ class Trainer:
                 )
                 break
 
+        # 9. Tải trọng số tốt nhất lên WandB Artifacts nếu đang bật WandB
+        best_ckpt = os.path.join(self.checkpoint_dir, self.run_name, "best.pth")
+        if os.path.exists(best_ckpt):
+            self.logger.log_model_artifact(best_ckpt)
+
         wandb_url = self.logger.wandb_url
         self.logger.close()
 

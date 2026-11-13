@@ -2,8 +2,7 @@
 
 Cung cấp:
 - CSVLogger: Ghi log chi tiết theo từng epoch ra file CSV cục bộ bằng thư viện chuẩn `csv`.
-- ExperimentLogger: Điều phối đồng thời CSV cục bộ và Weights & Biases; an toàn tuyệt đối
-  khi chạy offline hoặc chưa có API key.
+- ExperimentLogger: Điều phối đồng thời CSV cục bộ và Weights & Biases;
 - append_result: Ghi một dòng kết quả tóm tắt vào outputs/results.csv theo đúng định dạng nhóm.
 """
 
@@ -28,7 +27,7 @@ EPOCH_LOG_COLUMNS = [
     "is_best",
 ]
 
-# Danh sách cột chuẩn cho bảng tóm tắt kết quả toàn nhóm
+# Danh sách cột chuẩn cho bảng tóm tắt kết quả nhóm
 RESULT_COLUMNS = [
     "run_name",
     "model",
@@ -103,7 +102,8 @@ class ExperimentLogger:
         logging_cfg = config.get("logging", {})
         self.use_csv = bool(logging_cfg.get("use_csv", True))
         self.use_wandb = bool(logging_cfg.get("use_wandb", True))
-        self.wandb_mode = str(logging_cfg.get("wandb_mode", "offline")).lower()
+        env_wandb_mode = os.environ.get("WANDB_MODE")
+        self.wandb_mode = str(env_wandb_mode if env_wandb_mode else logging_cfg.get("wandb_mode", "offline")).lower()
         self.wandb_project = str(logging_cfg.get("wandb_project", "kvasir-seg-polyp"))
         self.wandb_entity = logging_cfg.get("wandb_entity", None)
 
@@ -156,6 +156,28 @@ class ExperimentLogger:
                     self.wandb_url = self.wandb_run.get_url()
             except Exception:
                 pass
+
+    def log_model_artifact(
+        self,
+        checkpoint_path: str,
+        artifact_name: Optional[str] = None,
+        aliases: Optional[List[str]] = None,
+    ) -> None:
+        """Đẩy file checkpoint mô hình (.pth) lên WandB Artifacts."""
+        if self.wandb_run is not None and os.path.exists(checkpoint_path):
+            try:
+                import wandb
+                name = artifact_name or f"{self.run_name}_model"
+                artifact = wandb.Artifact(
+                    name=name,
+                    type="model",
+                    description=f"Model checkpoint for {self.run_name}",
+                )
+                artifact.add_file(checkpoint_path)
+                wandb.log_artifact(artifact, aliases=aliases or ["best", "latest"])
+                print(f"[WandB Artifact] Đã tải thành công checkpoint lên WandB: {checkpoint_path}")
+            except Exception as e:
+                print(f"[Cảnh báo Logger] Không thể đẩy artifact lên WandB ({e}).")
 
     def close(self) -> None:
         """Đóng an toàn luồng ghi nhật ký WandB."""

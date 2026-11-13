@@ -57,5 +57,5 @@ logging:
   use_csv: true
   use_wandb: true
   wandb_project: "kvasir-seg-polyp"
-  wandb_entity: null
+  wandb_entity: null               
   wandb_mode: "offline"          # "online", "offline", "disabled"

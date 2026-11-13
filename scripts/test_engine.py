@@ -5,6 +5,10 @@ import math
 import os
 import shutil
 import sys
+
+# Vô hiệu hóa wandb network/daemon khi chạy unit test cục bộ
+os.environ["WANDB_MODE"] = "disabled"
+
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
@@ -22,7 +26,7 @@ from src.engine import Trainer, evaluate, build_optimizer, build_scheduler
 
 def run_tests():
     print("=" * 70)
-    print("BẮT ĐẦU KIỂM THỬ TOÀN DIỆN FEAT-009")
+    print("BẮT ĐẦU KIỂM THỬ")
     print("=" * 70)
 
     # -------------------------------------------------------------
