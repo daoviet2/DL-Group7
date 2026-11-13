@@ -152,6 +152,8 @@ class ExperimentLogger:
                 wandb.log(metrics, step=epoch)
                 if not self.wandb_url and hasattr(self.wandb_run, "url"):
                     self.wandb_url = self.wandb_run.url
+                elif not self.wandb_url and hasattr(self.wandb_run, "get_url"):
+                    self.wandb_url = self.wandb_run.get_url()
             except Exception:
                 pass
 

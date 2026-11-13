@@ -302,6 +302,7 @@ class Trainer:
                 )
                 break
 
+        wandb_url = self.logger.wandb_url
         self.logger.close()
 
         return {
@@ -312,6 +313,7 @@ class Trainer:
             "checkpoint_dir": os.path.join(self.checkpoint_dir, self.run_name),
             "best_checkpoint": os.path.join(self.checkpoint_dir, self.run_name, "best.pth"),
             "last_checkpoint": os.path.join(self.checkpoint_dir, self.run_name, "last.pth"),
+            "wandb_url": wandb_url,
         }
 
     def resume_from(self, checkpoint_path: str) -> None:
