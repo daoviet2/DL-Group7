@@ -125,10 +125,12 @@ python scripts/train.py --config configs/segformer_b0_bce_dice.yaml --override l
 ### 5.1. Giao diện mô hình và đăng ký module
 Mọi mô hình cần tuân theo kích thước đầu vào và đầu ra sau:
 
-$$\text{model}(\text{image}: [B, 3, H, W]) \longrightarrow \text{logits}: [B, 1, H, W]$$
+```text
+model(image: [B, 3, H, W]) -> logits: [B, 1, H, W]
+```
 
-- `image`: Tensor `torch.float32` kích thước $[B, 3, H, W]$ đã chuẩn hóa theo ImageNet.
-- `logits`: Tensor `torch.float32` kích thước $[B, 1, H, W]$ chứa raw logits (chưa qua sigmoid), cùng kích thước không gian $(H, W)$ với ảnh đầu vào.
+- `image`: Tensor `torch.float32` kích thước `[B, 3, H, W]` đã chuẩn hóa theo ImageNet.
+- `logits`: Tensor `torch.float32` kích thước `[B, 1, H, W]` chứa raw logits (chưa qua sigmoid), cùng kích thước không gian `(H, W)` với ảnh đầu vào.
 
 **Quy ước cho SegFormer (Đức)**:
 SegFormer xuất bản đồ đặc trưng ở kích thước bằng 1/4 ảnh gốc. Trong wrapper `src/models/segformer.py`, dùng nội suy song tuyến (bilinear interpolation) để đưa logits về đúng $(H, W)$:
@@ -148,7 +150,9 @@ Nhờ thống nhất, vòng lặp huấn luyện và đánh giá xử lý U-Net 
 ### 5.2. Giao diện hàm mất mát
 Các hàm mất mát nhận raw logits và mặt nạ nhị phân ground truth:
 
-$$\text{criterion}(\text{logits}: [B, 1, H, W], \text{targets}: [B, 1, H, W]) \longrightarrow \text{loss (scalar)}$$
+```text
+criterion(logits: [B, 1, H, W], targets: [B, 1, H, W]) -> loss (scalar)
+```
 
 Toàn bộ phép tính mất mát bên trong cần ép về `torch.float32` (`logits.float()`) để tránh tràn số dưới khi bật AMP fp16.
 
@@ -217,7 +221,9 @@ File này dùng để phân tích sai số theo nhóm kích thước tổn thư�
 
 ### 5.6. Quy ước đặt tên run và đồng bộ WandB
 - **Quy ước đặt tên run**:
-  $$\text{run\_name} = \langle\text{model}\rangle\_\langle\text{loss}\rangle\_\text{s}\langle\text{seed}\rangle\_\langle\text{image\_size}\rangle[\_\text{noaug}]$$
+  ```text
+  run_name = <model>_<loss>_s<seed>_<image_size>[_noaug]
+  ```
   Ví dụ: `unet_scratch_bce_dice_s42_256`, `unet_resnet34_focal_s100_256_noaug`.
 - **Thư mục kết quả**:
   - `outputs/checkpoints/<run_name>/best.pth`: Checkpoint tốt nhất theo Val Dice.
