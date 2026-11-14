@@ -219,7 +219,7 @@ unet_scratch_bce_dice_s42_256,cju0qx73cjw570799j4n5cjze,0.9833,0.9672,large,0.31
 
 File này dùng để phân tích sai số theo nhóm kích thước tổn thương (`small`, `medium`, `large`) và số lượng polyp. Script chạy SAM của Hưởng cũng xuất dữ liệu theo cùng định dạng.
 
-### 5.6. Quy ước đặt tên run và đồng bộ WandB
+### 5.6. Quy ước đặt tên run
 - **Quy ước đặt tên run**:
   ```text
   run_name = <model>_<loss>_s<seed>_<image_size>[_noaug]
