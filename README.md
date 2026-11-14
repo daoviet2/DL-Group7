@@ -231,11 +231,6 @@ File này dùng để phân tích sai số theo nhóm kích thước tổn thư�
   - `outputs/logs/<run_name>.csv`: Nhật ký huấn luyện từng epoch (loss, dice, lr, time).
   - `outputs/predictions/<run_name>_<split>_per_image.csv`: Điểm số từng ảnh.
   - `outputs/results.csv`: Bảng tổng hợp các lần chạy của nhóm.
-- **Dự án Weights & Biases chung**:
-  - Tên dự án: `kvasir-seg-polyp`.
-  - Cả nhóm dùng chung 1 API key duy nhất. Mỗi thành viên lưu API key này vào Kaggle Secrets (`WANDB_API_KEY`) hoặc nhập qua lệnh `wandb login`.
-  - Trong `configs/base.yaml`, giữ nguyên `wandb_entity: null`.
-  - Toàn bộ kết quả huấn luyện của cả 3 thành viên sẽ tự động về chung một dashboard duy nhất.
 
 ---
 
